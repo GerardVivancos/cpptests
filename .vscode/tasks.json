@@ -1,0 +1,34 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "shell",
+			"osx": {
+				"command": "/usr/bin/clang++",
+				"args": [
+					"-fdiagnostics-color=always",
+					"-std=c++17",
+					"-stdlib=libc++",
+					"-g",
+					"${file}",
+					"-o",
+					"${fileDirname}/bin/${fileBasenameNoExtension}"
+				],
+			},
+			"label": "C/C++: clang++ build active file",
+			"command": "ls",
+			"args": [],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"detail": "compiler: /usr/bin/clang++"
+		}
+	]
+}
