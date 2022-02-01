@@ -51,7 +51,20 @@
         "type_traits": "cpp",
         "typeinfo": "cpp",
         "utility": "cpp",
-        "vector": "cpp"
+        "vector": "cpp",
+        "__hash_table": "cpp",
+        "__node_handle": "cpp",
+        "__tree": "cpp",
+        "array": "cpp",
+        "cmath": "cpp",
+        "complex": "cpp",
+        "iomanip": "cpp",
+        "map": "cpp",
+        "optional": "cpp",
+        "set": "cpp",
+        "sstream": "cpp",
+        "unordered_map": "cpp",
+        "unordered_set": "cpp"
     },
     "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
     "cmake.sourceDirectory": "${workspaceFolder}/src"
