@@ -5,5 +5,13 @@ bin/*
 CMakeFiles/
 CMakeCache.txt
 cmake_install.cmake
+cmake_uninstall.cmake
 Makefile
 build
+CMakeLists.txt.user
+CMakeScripts
+Testing
+install_manifest.txt
+compile_commands.json
+CTestTestfile.cmake
+_deps
