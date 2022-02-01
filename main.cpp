@@ -2,6 +2,7 @@
 #include <vector>
 #include <string>
 #include <GLFW/glfw3.h>
+#include <glm/ext/vector_float2.hpp>
 
 using namespace std;
 

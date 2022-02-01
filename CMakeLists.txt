@@ -13,9 +13,14 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 # add the executable
 add_executable(Cpptests main.cpp)
 
-# Add libraries
+# GLFW
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 add_subdirectory(lib/glfw-3.3.6)
-target_link_libraries(Cpptests PUBLIC glfw)
+
+# GLM
+add_subdirectory(lib/glm)
+
+
+target_link_libraries(Cpptests PUBLIC glfw glm)
