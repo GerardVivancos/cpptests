@@ -23,5 +23,8 @@ include_directories(lib/glfw-3.3.6/include)
 # GLM
 add_subdirectory(lib/glm)
 
+# Vulkan. For now assume the sdkis installed in the system
+find_package(Vulkan REQUIRED)
 
-target_link_libraries(Cpptests PUBLIC glfw glm)
+
+target_link_libraries(Cpptests PUBLIC glfw glm Vulkan::Vulkan)
