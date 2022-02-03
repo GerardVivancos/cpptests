@@ -11,14 +11,39 @@ using namespace std;
 class VulkanApp {
 public:
     void run() {
+        createWindow();
         initVulkan();
+        mainLoop();
+        cleanup();
     };
 
 private:
+    GLFWwindow *window;
     VkInstance instance;
-
+    
+    void createWindow() {
+        glfwInit();
+        glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+        window = glfwCreateWindow(640, 480, "My Title", NULL, NULL);
+        if (!window) {
+            const char *description;
+            int error_code = glfwGetError(&description);
+            if (error_code != GLFW_NO_ERROR && description) {
+                cout << description << endl;
+            }
+            throw std::runtime_error("could not create glfw window");
+        }
+    }
+    
     void initVulkan() {
+        printSupportedExtensions();
         createInstance();
+    }
+
+    void mainLoop() {
+        while(!glfwWindowShouldClose(window)) {
+            glfwPollEvents();
+        }
     }
 
     void createInstance() {
@@ -62,6 +87,12 @@ private:
         }
     }
 
+    void cleanup() {
+        vkDestroyInstance(instance, nullptr);
+        glfwDestroyWindow(window);
+        glfwTerminate();
+    }
+
     bool supportsVkExtension(const char *name) {
         uint32_t extensionCount = 0;
         vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr);
@@ -75,47 +106,30 @@ private:
         }
         return false;
     }
+
+    void printSupportedExtensions() {
+        uint32_t extensionCount = 0;
+        vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr);
+        vector<VkExtensionProperties> extensions(extensionCount);
+        vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, extensions.data());
+
+        cout << extensionCount << " extensions supported:" << endl;
+        for (uint32_t i = 0; i < extensionCount; i++) {
+            cout << "- " << extensions[i].extensionName << endl;
+        }
+    }
 };
 
 
 int main()
 {
-    glfwInit();
-    glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-    GLFWwindow *window = glfwCreateWindow(640, 480, "My Title", NULL, NULL);
-    if (!window) {
-        cout << "No window" << endl;
-        const char *description;
-        int error_code = glfwGetError(&description);
-        if (error_code != GLFW_NO_ERROR) {
-            if (description)
-                cout << description << endl;
-        }
-    }
-
-    uint32_t extensionCount = 0;
-    vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr);
-    vector<VkExtensionProperties> extensions(extensionCount);
-    vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, extensions.data());
-
-    cout << extensionCount << " extensions supported:" << endl;
-    for (uint32_t i = 0; i < extensionCount; i++) {
-        cout << "- " << extensions[i].extensionName << endl;
-    }
-    
     try {
-    VulkanApp app = VulkanApp();
-    app.run();
+        VulkanApp app = VulkanApp();
+        app.run();
     } catch(exception e) {
         cout << "exception: " << e.what() << endl;
         return 1;
     }
-
-    while(!glfwWindowShouldClose(window)) {
-        glfwPollEvents();
-    }
-    glfwDestroyWindow(window);
-    glfwTerminate();
 
     return 0;
 }
