@@ -99,8 +99,8 @@ private:
         vector<VkExtensionProperties> extensions(extensionCount);
         vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, extensions.data());
 
-        for (uint32_t i = 0; i < extensionCount; i++) {
-            if (strcmp(name, extensions[i].extensionName) == 0) {
+        for (const VkExtensionProperties extension: extensions) {
+            if (strcmp(name, extension.extensionName) == 0) {
                 return true;
             }
         }
@@ -114,8 +114,8 @@ private:
         vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, extensions.data());
 
         cout << extensionCount << " extensions supported:" << endl;
-        for (uint32_t i = 0; i < extensionCount; i++) {
-            cout << "- " << extensions[i].extensionName << endl;
+        for (const VkExtensionProperties extension: extensions) {
+            cout << "- " << extension.extensionName << endl;
         }
     }
 };
