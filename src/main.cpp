@@ -27,7 +27,8 @@ public:
 
 private:
     GLFWwindow *window;
-    VkInstance instance;
+    VkInstance instance = VK_NULL_HANDLE;
+    VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
     
     void createWindow() {
         glfwInit();
@@ -48,6 +49,7 @@ private:
         if (enableValidationLayers)
             printSupportedLayers();
         createInstance();
+        createPhysicalDevice();
     }
 
     void mainLoop() {
@@ -124,7 +126,28 @@ private:
         }
     }
 
+    void createPhysicalDevice() {
+        uint32_t physicalDevicesCount = 0;
+        vkEnumeratePhysicalDevices(instance, &physicalDevicesCount, nullptr);
+        if (physicalDevicesCount == 0) {
+            throw std::runtime_error("no physical devices found");
+        }
+        
+        vector<VkPhysicalDevice> physicalDevices(physicalDevicesCount);
+        auto result = vkEnumeratePhysicalDevices(instance, &physicalDevicesCount, physicalDevices.data());
+        assert(result == VK_SUCCESS);
+
+        cout << "Devices found: " << endl;
+        VkPhysicalDeviceProperties deviceProperties;
+        for (int i = 0; i < physicalDevicesCount; i++) {
+            vkGetPhysicalDeviceProperties(physicalDevices[i], &deviceProperties);
+            cout << deviceProperties.deviceID <<" "<< deviceProperties.deviceName <<" "<< deviceProperties.deviceType << endl;
+        }
+
+    }
+
     void cleanup() {
+        // physicalDevice is destroyed by vkDestroyInstance
         vkDestroyInstance(instance, nullptr);
         glfwDestroyWindow(window);
         glfwTerminate();
