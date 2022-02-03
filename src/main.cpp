@@ -8,6 +8,14 @@
 
 using namespace std;
 
+const uint32_t WIDTH = 800;
+const uint32_t HEIGHT = 600;
+#ifdef NDEBUG
+    const bool enableValidationLayers = false;
+#else
+    const bool enableValidationLayers = true;
+#endif
+
 class VulkanApp {
 public:
     void run() {
@@ -24,7 +32,7 @@ private:
     void createWindow() {
         glfwInit();
         glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-        window = glfwCreateWindow(640, 480, "My Title", NULL, NULL);
+        window = glfwCreateWindow(WIDTH, HEIGHT, "My Title", NULL, NULL);
         if (!window) {
             const char *description;
             int error_code = glfwGetError(&description);
@@ -37,6 +45,8 @@ private:
     
     void initVulkan() {
         printSupportedExtensions();
+        if (enableValidationLayers)
+            printSupportedLayers();
         createInstance();
     }
 
@@ -63,6 +73,33 @@ private:
         createInfo.enabledExtensionCount = glfwExtensionCount;
         createInfo.ppEnabledExtensionNames = glfwExtensions;
         createInfo.enabledLayerCount = 0;
+
+        if (enableValidationLayers) {
+            std::vector<const char*>  validationLayerNames = {
+                "VK_LAYER_KHRONOS_validation"
+            };
+
+            bool allLayersSupported = true;
+            cout << validationLayerNames.size() << " validation layers required" << endl;
+            for (auto layer: validationLayerNames) {
+                bool supported = supportsVkLayer(layer);
+                cout << "- " << layer;
+                if (supported) {
+                    cout << " (Supported)" << endl;
+                } else {
+                    cout << " (NOT supported)" << endl;
+                    allLayersSupported = false;
+                }
+            }
+
+            if (!allLayersSupported) {
+                throw std::runtime_error("error initializing validation layers: required extension not supported");
+            }
+            
+            createInfo.enabledLayerCount = static_cast<uint32_t>(validationLayerNames.size());
+            createInfo.ppEnabledLayerNames = validationLayerNames.data();
+            cout << "Validation layers enabled" << endl;
+        }
 
         bool allExtSupported = true;
         cout << glfwExtensionCount << " extensions required:" << endl;
@@ -107,6 +144,20 @@ private:
         return false;
     }
 
+    bool supportsVkLayer(const char *name) {
+        uint32_t layerCount = 0;
+        vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
+        vector<VkLayerProperties> layers(layerCount);
+        vkEnumerateInstanceLayerProperties(&layerCount, layers.data());
+
+        for (const VkLayerProperties layer: layers) {
+            if (strcmp(name, layer.layerName) == 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     void printSupportedExtensions() {
         uint32_t extensionCount = 0;
         vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr);
@@ -116,6 +167,18 @@ private:
         cout << extensionCount << " extensions supported:" << endl;
         for (const VkExtensionProperties extension: extensions) {
             cout << "- " << extension.extensionName << endl;
+        }
+    }
+
+    void printSupportedLayers() {
+        uint32_t layerCount = 0;
+        vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
+        vector<VkLayerProperties> layers(layerCount);
+        vkEnumerateInstanceLayerProperties(&layerCount, layers.data());
+
+        cout << layerCount << " layers supported:" << endl;
+        for (const VkLayerProperties layer: layers) {
+            cout << "- " << layer.layerName << endl;
         }
     }
 };
