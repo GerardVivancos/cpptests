@@ -135,7 +135,6 @@ private:
         
         vector<VkPhysicalDevice> physicalDevices(physicalDevicesCount);
         auto result = vkEnumeratePhysicalDevices(instance, &physicalDevicesCount, physicalDevices.data());
-        assert(result == VK_SUCCESS);
 
         cout << "Devices found: " << endl;
         VkPhysicalDeviceProperties deviceProperties;
