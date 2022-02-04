@@ -167,6 +167,28 @@ private:
             cout << deviceProperties.deviceID <<" "<< deviceProperties.deviceName <<" "<< deviceProperties.deviceType << endl;
         }
 
+        for (auto device: physicalDevices) {
+            if (isDeviceSuitable(device)) {
+                physicalDevice = device;
+                cout << "Selected device: " << deviceProperties.deviceID <<" "<< deviceProperties.deviceName <<" "<< deviceProperties.deviceType << endl;
+                break;
+            }
+        }
+
+        if (physicalDevice == VK_NULL_HANDLE) {
+            throw std::runtime_error("no suitable physical device found");
+        }
+
+    }
+
+    bool isDeviceSuitable(VkPhysicalDevice device) {
+        VkPhysicalDeviceProperties deviceProperties;
+        VkPhysicalDeviceFeatures deviceFeatures;
+        vkGetPhysicalDeviceProperties(device, &deviceProperties);
+        vkGetPhysicalDeviceFeatures(device, &deviceFeatures);
+
+        //here's where we'd check for specific properties and features but right now we don't care
+        return true;
     }
 
     void cleanup() {
@@ -235,7 +257,7 @@ int main()
     try {
         VulkanApp app = VulkanApp();
         app.run();
-    } catch(exception e) {
+    } catch(exception& e) {
         cout << "exception: " << e.what() << endl;
         return 1;
     }
