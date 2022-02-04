@@ -33,6 +33,7 @@ private:
     void createWindow() {
         glfwInit();
         glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+        glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
         window = glfwCreateWindow(WIDTH, HEIGHT, "My Title", NULL, NULL);
         if (!window) {
             const char *description;
