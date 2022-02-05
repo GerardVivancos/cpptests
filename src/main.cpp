@@ -3,8 +3,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
-#include <GLFW/glfw3.h>
-#include <vector>
+#include "window.h"
 
 using namespace std;
 
@@ -26,7 +25,7 @@ public:
     };
 
 private:
-    GLFWwindow *window;
+    Window *window;
     VkInstance instance = VK_NULL_HANDLE;
     VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
 
@@ -42,18 +41,7 @@ private:
     }
     
     void createWindow() {
-        glfwInit();
-        glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-        glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
-        window = glfwCreateWindow(WIDTH, HEIGHT, "My Title", NULL, NULL);
-        if (!window) {
-            const char *description;
-            int error_code = glfwGetError(&description);
-            if (error_code != GLFW_NO_ERROR && description) {
-                cout << description << endl;
-            }
-            throw std::runtime_error("could not create glfw window");
-        }
+        window = new Window(WIDTH, HEIGHT, "Finestra");
     }
     
     void initVulkan() {
@@ -65,8 +53,8 @@ private:
     }
 
     void mainLoop() {
-        while(!glfwWindowShouldClose(window)) {
-            glfwPollEvents();
+        while(!window->ShouldClose()) {
+            window->PollEvents();
         }
     }
 
@@ -194,8 +182,7 @@ private:
     void cleanup() {
         // physicalDevice is destroyed by vkDestroyInstance
         vkDestroyInstance(instance, nullptr);
-        glfwDestroyWindow(window);
-        glfwTerminate();
+        delete window;
     }
 
     bool supportsVkExtension(const char *name) {
