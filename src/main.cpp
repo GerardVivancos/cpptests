@@ -150,7 +150,7 @@ private:
 
         cout << "Devices found: " << endl;
         VkPhysicalDeviceProperties deviceProperties;
-        for (int i = 0; i < physicalDevicesCount; i++) {
+        for (uint32_t i = 0; i < physicalDevicesCount; i++) {
             vkGetPhysicalDeviceProperties(physicalDevices[i], &deviceProperties);
             cout << deviceProperties.deviceID <<" "<< deviceProperties.deviceName <<" "<< deviceProperties.deviceType << endl;
         }
