@@ -156,6 +156,7 @@ private:
         }
 
         for (auto device: physicalDevices) {
+            vkGetPhysicalDeviceProperties(device, &deviceProperties);
             cout << "Assessing device: " << deviceProperties.deviceID <<" "<< deviceProperties.deviceName <<" "<< deviceProperties.deviceType << endl;
             if (isDeviceSuitable(device)) {
                 physicalDevice = device;
