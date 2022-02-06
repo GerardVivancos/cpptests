@@ -150,12 +150,13 @@ private:
 
         cout << "Devices found: " << endl;
         VkPhysicalDeviceProperties deviceProperties;
-        for (uint32_t i = 0; i < physicalDevicesCount; i++) {
-            vkGetPhysicalDeviceProperties(physicalDevices[i], &deviceProperties);
+        for (auto device: physicalDevices) {
+            vkGetPhysicalDeviceProperties(device, &deviceProperties);
             cout << deviceProperties.deviceID <<" "<< deviceProperties.deviceName <<" "<< deviceProperties.deviceType << endl;
         }
 
         for (auto device: physicalDevices) {
+            cout << "Assessing device: " << deviceProperties.deviceID <<" "<< deviceProperties.deviceName <<" "<< deviceProperties.deviceType << endl;
             if (isDeviceSuitable(device)) {
                 physicalDevice = device;
                 cout << "Selected device: " << deviceProperties.deviceID <<" "<< deviceProperties.deviceName <<" "<< deviceProperties.deviceType << endl;
