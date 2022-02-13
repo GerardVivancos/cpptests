@@ -3,7 +3,8 @@
 #include <iostream>
 #include <vector>
 #include <string>
-#include "window.h"
+#include "window/window.h"
+#include "vulkan/physicaldevice.h"
 
 using namespace std;
 
@@ -139,50 +140,11 @@ private:
     }
 
     void createPhysicalDevice() {
-        uint32_t physicalDevicesCount = 0;
-        vkEnumeratePhysicalDevices(instance, &physicalDevicesCount, nullptr);
-        if (physicalDevicesCount == 0) {
-            throw std::runtime_error("no physical devices found");
-        }
-        
-        vector<VkPhysicalDevice> physicalDevices(physicalDevicesCount);
-        auto result = vkEnumeratePhysicalDevices(instance, &physicalDevicesCount, physicalDevices.data());
-
-        cout << "Devices found: " << endl;
-        VkPhysicalDeviceProperties deviceProperties;
-        for (auto device: physicalDevices) {
-            vkGetPhysicalDeviceProperties(device, &deviceProperties);
-            cout << deviceProperties.deviceID <<" "<< deviceProperties.deviceName <<" "<< deviceProperties.deviceType << endl;
-        }
-
-        for (auto device: physicalDevices) {
-            vkGetPhysicalDeviceProperties(device, &deviceProperties);
-            cout << "Assessing device: " << deviceProperties.deviceID <<" "<< deviceProperties.deviceName <<" "<< deviceProperties.deviceType << endl;
-            if (isDeviceSuitable(device)) {
-                physicalDevice = device;
-                cout << "Selected device: " << deviceProperties.deviceID <<" "<< deviceProperties.deviceName <<" "<< deviceProperties.deviceType << endl;
-                break;
-            }
-        }
-
-        if (physicalDevice == VK_NULL_HANDLE) {
-            throw std::runtime_error("no suitable physical device found");
-        }
-
-    }
-
-    bool isDeviceSuitable(VkPhysicalDevice device) {
-        VkPhysicalDeviceProperties deviceProperties;
-        VkPhysicalDeviceFeatures deviceFeatures;
-        vkGetPhysicalDeviceProperties(device, &deviceProperties);
-        vkGetPhysicalDeviceFeatures(device, &deviceFeatures);
-
-        //here's where we'd check for specific properties and features but right now we don't care
-        return true;
+        PhysicalDeviceBuilder pdBuilder(instance);
+        physicalDevice = pdBuilder.Build();
     }
 
     void cleanup() {
-        // physicalDevice is destroyed by vkDestroyInstance
         vkDestroyInstance(instance, nullptr);
         delete window;
     }
